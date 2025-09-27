@@ -2,222 +2,106 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>99 MCQ Computer Quiz</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>99 Questions Quiz</title>
   <style>
-    body {font-family: Arial, sans-serif; background:#f5f7fa; margin:0; padding:0;}
-    .container {max-width: 800px; margin: auto; padding: 20px;}
-    h1{text-align:center; color:#2c3e50;}
-    #loginPage, #quizPage {display:none;}
-    .question{margin-bottom:15px; padding:20px; background:#fff; border-radius:10px; 
-              box-shadow:0 2px 5px rgba(0,0,0,0.1);}
-    .options label{display:block; margin:8px 0; padding:10px; border:1px solid #ccc;
-                   border-radius:6px; cursor:pointer;}
-    .options input{margin-right:10px;}
-    #timer{font-size:18px; font-weight:bold; color:#e74c3c; text-align:center; margin:15px 0;}
-    #navigation{display:flex; flex-wrap:wrap; justify-content:center; margin-top:15px;}
-    .circle{width:30px; height:30px; line-height:30px; text-align:center; border-radius:50%;
-            background:red; color:white; margin:5px; cursor:pointer; font-size:14px;}
-    .answered{background:green !important;}
-    .btn{background:#3498db; color:#fff; padding:10px 20px; border:none; border-radius:8px;
-         cursor:pointer; margin:10px; font-size:16px;}
-    .btn:hover{background:#2980b9;}
-    .btn:disabled{background:gray; cursor:not-allowed;}
-    #result{font-size:18px; font-weight:bold; text-align:center; margin:20px 0;}
+    body { font-family: Arial, sans-serif; background: #f7f9fc; margin: 0; padding: 0; }
+    .container { max-width: 900px; margin: auto; padding: 20px; }
+    h1 { text-align: center; color: #003366; }
+    .question-box { background: #fff; padding: 20px; border-radius: 10px; margin-bottom: 20px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
+    .options label { display: block; margin-bottom: 8px; cursor: pointer; }
+    .buttons { text-align: center; margin-top: 20px; }
+    button { background: #007BFF; color: white; border: none; padding: 10px 20px; margin: 5px; border-radius: 8px; cursor: pointer; font-size: 16px; }
+    button:disabled { background: gray; cursor: not-allowed; }
+    .question-nav { display: flex; flex-wrap: wrap; justify-content: center; margin-top: 20px; }
+    .nav-btn { width: 35px; height: 35px; border-radius: 50%; margin: 5px; border: none; color: white; font-weight: bold; cursor: pointer; }
+    .nav-red { background: red; }
+    .nav-green { background: green; }
+    #timer { text-align: center; font-size: 18px; font-weight: bold; margin-bottom: 10px; }
+    #result { text-align: center; font-size: 20px; font-weight: bold; color: #003366; }
   </style>
 </head>
 <body>
-<div class="container">
-  <h1>99 MCQ Computer Quiz</h1>
-  
-  <!-- Login Page -->
-  <div id="loginPage">
-    <h2>Login to Start Quiz</h2>
-    <label>Enter Your Name: <input type="text" id="studentName"></label><br><br>
-    <button class="btn" onclick="startQuiz()">Start Quiz</button>
-  </div>
-  
-  <!-- Quiz Page -->
-  <div id="quizPage">
+  <div class="container">
+    <h1>Quiz Portal</h1>
     <div id="timer">Time Left: 60:00</div>
-    <div id="questionBox" class="question"></div>
-    <div style="text-align:center;">
-      <button class="btn" id="nextBtn" onclick="saveAndNext()">Save & Next</button>
-      <button class="btn" id="submitBtn" onclick="submitQuiz()">Submit</button>
+    <div id="quiz"></div>
+    <div class="buttons">
+      <button onclick="prevQuestion()">Previous</button>
+      <button onclick="nextQuestion()">Save & Next</button>
+      <button id="submitBtn" onclick="submitQuiz()">Submit</button>
     </div>
-    <div id="navigation"></div>
+    <div class="question-nav" id="questionNav"></div>
     <div id="result"></div>
   </div>
-</div>
 
 <script>
-// ==== Quiz Data (99 Questions) ====
-const quizData = [
-{q:"What does CPU stand for?", o:["Central Processing Unit","Computer Personal Unit","Central Power Unit","Control Processing Unit"], a:0},
-{q:"What does URL stand for?", o:["Uniform Resource Locator","Universal Resource Link","Uniform Routing Link","Unique Resource Locator"], a:0},
-{q:"Shortcut key for Copy?", o:["Ctrl + X","Ctrl + C","Ctrl + V","Ctrl + P"], a:1},
-{q:"Shortcut key for Paste?", o:["Ctrl + V","Ctrl + C","Ctrl + X","Ctrl + P"], a:0},
-{q:"Shortcut for Undo?", o:["Ctrl + U","Ctrl + Z","Ctrl + Y","Ctrl + X"], a:1},
-{q:"Shortcut for Redo?", o:["Ctrl + Z","Ctrl + Y","Ctrl + R","Ctrl + U"], a:1},
-{q:"Full form of HTTP?", o:["HyperText Transfer Protocol","HyperText Transfer Page","HighText Transfer Protocol","HyperText Transmission Protocol"], a:0},
-{q:"Full form of HTML?", o:["HyperText Markup Language","Hyper Tool Markup Language","HighText Markup Language","HyperText Making Language"], a:0},
-{q:"Full form of HTTPS?", o:["HyperText Transfer Protocol Secure","HyperText Transfer Page Secure","Hyper Tool Transfer Protocol Secure","HighText Transmission Protocol Secure"], a:0},
-{q:"Full form of IP?", o:["Internet Protocol","Internal Protocol","Internet Process","Internal Process"], a:0},
-{q:"Shortcut key for Save?", o:["Ctrl + S","Ctrl + Shift + S","Ctrl + P","Ctrl + C"], a:0},
-{q:"Shortcut key for Print?", o:["Ctrl + P","Ctrl + S","Ctrl + V","Ctrl + C"], a:0},
-{q:"Full form of PDF?", o:["Portable Document Format","Print Document Format","Portable Data Format","Public Document Format"], a:0},
-{q:"Full form of BIOS?", o:["Basic Input Output System","Binary Input Output System","Basic Internal Output System","Binary Internal Output System"], a:0},
-{q:"Full form of LAN?", o:["Local Area Network","Large Area Network","Long Area Network","Light Area Network"], a:0},
-{q:"Full form of WAN?", o:["Wide Area Network","Wireless Area Network","Web Area Network","Wide Access Network"], a:0},
-{q:"Full form of GUI?", o:["Graphical User Interface","General User Interface","Graphical Universal Interface","General Universal Interface"], a:0},
-{q:"Shortcut key for Select All?", o:["Ctrl + A","Ctrl + S","Ctrl + D","Ctrl + L"], a:0},
-{q:"Shortcut key for Find?", o:["Ctrl + F","Ctrl + H","Ctrl + G","Ctrl + K"], a:0},
-{q:"Full form of SMTP?", o:["Simple Mail Transfer Protocol","Secure Mail Transfer Protocol","Simple Mail Transmission Protocol","Secure Mail Transmission Protocol"], a:0},
-{q:"Full form of FTP?", o:["File Transfer Protocol","File Transmission Protocol","Fast Transfer Protocol","Fast Transmission Protocol"], a:0},
-{q:"Full form of SQL?", o:["Structured Query Language","Standard Query Language","Simple Query Language","Sequential Query Language"], a:0},
-{q:"Full form of DNS?", o:["Domain Name System","Domain Network System","Data Name System","Data Network System"], a:0},
-{q:"Full form of DOS?", o:["Disk Operating System","Data Operating System","Drive Operating System","Desktop Operating System"], a:0},
-{q:"Full form of RAM?", o:["Random Access Memory","Read Access Memory","Read Any Memory","Random Available Memory"], a:0},
-{q:"Full form of ROM?", o:["Read Only Memory","Read On Memory","Random Only Memory","Read Optional Memory"], a:0},
-{q:"Full form of VGA?", o:["Video Graphics Array","Visual Graphics Array","Visual Graph Array","Video Graph Array"], a:0},
-{q:"Full form of DTP?", o:["Desktop Publishing","Data Transfer Protocol","Digital Transfer Processing","Data Text Processing"], a:0},
-{q:"Full form of SMTP?", o:["Simple Mail Transfer Protocol","Secure Mail Transfer Protocol","Simple Mail Transmission Protocol","Secure Mail Transmission Protocol"], a:0},
-{q:"Shortcut key to Bold?", o:["Ctrl + B","Ctrl + I","Ctrl + U","Ctrl + V"], a:0},
-{q:"Shortcut key to Italic?", o:["Ctrl + I","Ctrl + B","Ctrl + U","Ctrl + P"], a:0},
-{q:"Shortcut key to Underline?", o:["Ctrl + U","Ctrl + I","Ctrl + B","Ctrl + P"], a:0},
-{q:"Shortcut key to Open new document?", o:["Ctrl + O","Ctrl + N","Ctrl + Shift + N","Ctrl + P"], a:1},
-{q:"Shortcut key for Close document?", o:["Ctrl + C","Ctrl + W","Ctrl + Q","Ctrl + E"], a:1},
-{q:"Shortcut key for New Slide in PPT?", o:["Ctrl + M","Ctrl + N","Ctrl + S","Ctrl + P"], a:0},
-{q:"Shortcut key for Delete Slide in PPT?", o:["Delete","Ctrl + D","Ctrl + Del","Ctrl + Shift + D"], a:0},
-{q:"Shortcut key for Insert Hyperlink?", o:["Ctrl + H","Ctrl + K","Ctrl + L","Ctrl + I"], a:1},
-{q:"Full form of URL?", o:["Uniform Resource Locator","Uniform Resource Link","Universal Resource Locator","Unique Resource Locator"], a:0},
-{q:"Full form of USB?", o:["Universal Serial Bus","Universal System Bus","Universal Source Bus","Unique Serial Bus"], a:0},
-{q:"Full form of CD?", o:["Compact Disc","Compact Data","Computer Disc","Compact Drive"], a:0},
-{q:"Full form of DVD?", o:["Digital Versatile Disc","Digital Video Disc","Data Versatile Disc","Data Video Disc"], a:1},
-{q:"Full form of GUI?", o:["Graphical User Interface","General User Interface","Graphical Universal Interface","General Universal Interface"], a:0},
-{q:"Full form of HTTP?", o:["Hypertext Transfer Protocol","Hypertext Transmission Protocol","Hyper Transfer Text Protocol","High Transfer Text Protocol"], a:0},
-{q:"Full form of HTTPS?", o:["Hypertext Transfer Protocol Secure","Hypertext Transmission Protocol Secure","Hyper Transfer Text Protocol Secure","High Transfer Text Protocol Secure"], a:0},
-{q:"Full form of AI?", o:["Artificial Intelligence","Automatic Intelligence","Automated Interface","Artificial Interface"], a:0},
-{q:"Full form of ML?", o:["Machine Learning","Machine Level","Maximum Learning","Maximum Level"], a:0},
-{q:"Full form of URL?", o:["Uniform Resource Locator","Universal Resource Locator","Uniform Routing Link","Unique Resource Locator"], a:0},
-{q:"Full form of OLED?", o:["Organic Light Emitting Diode","Original Light Emitting Diode","Organic Laser Emitting Diode","Original Laser Emitting Diode"], a:0},
-{q:"Full form of OCR?", o:["Optical Character Recognition","Optical Code Recognition","Optical Character Reading","Original Character Recognition"], a:0},
-{q:"Shortcut key for Find and Replace?", o:["Ctrl + H","Ctrl + F","Ctrl + R","Ctrl + G"], a:0},
-{q:"Full form of PDF?", o:["Portable Document Format","Page Document Format","Portable Data Format","Print Document Format"], a:0},
-{q:"Full form of CAD?", o:["Computer Aided Design","Computer Assisted Design","Computer Algorithm Design","Computer Automated Design"], a:0},
-{q:"Full form of CAM?", o:["Computer Aided Manufacturing","Computer Assisted Manufacturing","Computer Automated Manufacturing","Computer Algorithmic Manufacturing"], a:0},
-{q:"Shortcut key for Hyperlink?", o:["Ctrl + K","Ctrl + H","Ctrl + L","Ctrl + U"], a:0},
-{q:"Full form of IP?", o:["Internet Protocol","Internal Protocol","Internet Process","Internal Process"], a:0},
-{q:"Full form of MAC?", o:["Media Access Control","Media Algorithm Control","Media Access Code","Media Automated Control"], a:0},
-{q:"Full form of FTP?", o:["File Transfer Protocol","File Transmission Protocol","Fast Transfer Protocol","Fast Transmission Protocol"], a:0},
-{q:"Full form of DNS?", o:["Domain Name System","Domain Network System","Data Name System","Data Network System"], a:0},
-{q:"Full form of ISP?", o:["Internet Service Provider","Internal Service Provider","Internet System Provider","Internal System Provider"], a:0},
-{q:"Shortcut key for Print Preview?", o:["Ctrl + F2","Ctrl + P","Ctrl + Shift + P","Ctrl + Alt + P"], a:0},
-{q:"Shortcut key for Zoom In?", o:["Ctrl + +","Ctrl + Z","Ctrl + Shift + +","Ctrl + I"], a:0},
-{q:"Shortcut key for Zoom Out?", o:["Ctrl + -","Ctrl + Shift + -","Ctrl + Alt + -","Ctrl + Z"], a:0},
-{q:"Shortcut key for Switch between windows?", o:["Alt + Tab","Ctrl + Tab","Shift + Tab","Alt + W"], a:0},
-{q:"Shortcut key for Minimize window?", o:["Win + Down Arrow","Alt + Down Arrow","Ctrl + Down Arrow","Shift + Down Arrow"], a:0},
-{q:"Shortcut key for Maximize window?", o:["Win + Up Arrow","Alt + Up Arrow","Ctrl + Up Arrow","Shift + Up Arrow"], a:0},
-{q:"Shortcut key to Lock Computer?", o:["Win + L","Ctrl + L","Alt + L","Shift + L"], a:0},
-{q:"Full form of SMTP?", o:["Simple Mail Transfer Protocol","Secure Mail Transfer Protocol","Simple Mail Transmission Protocol","Secure Mail Transmission Protocol"], a:0},
-{q:"Full form of POP3?", o:["Post Office Protocol 3","Post Office Protocol 2","Packet Office Protocol 3","Post Online Protocol 3"], a:0},
-{q:"Full form of IMAP?", o:["Internet Message Access Protocol","Internet Mail Access Protocol","Internet Message Automatic Protocol","Internet Mail Automatic Protocol"], a:0},
-{q:"Full form of IP?", o:["Internet Protocol","Internal Protocol","Internet Process","Internal Process"], a:0},
-{q:"Full form of VPN?", o:["Virtual Private Network","Virtual Public Network","Virtual Personal Network","Virtual Protocol Network"], a:0},
-{q:"Full form of URL?", o:["Uniform Resource Locator","Universal Resource Locator","Uniform Routing Link","Unique Resource Locator"], a:0},
-{q:"Full form of XML?", o:["Extensible Markup Language","Extra Markup Language","Extended Markup Language","Extra Multi Language"], a:0},
-{q:"Full form of JSON?", o:["JavaScript Object Notation","Java Standard Object Notation","JavaScript Original Notation","Java Standard Original Notation"], a:0},
-{q:"Full form of CSS?", o:["Cascading Style Sheets","Computer Style Sheets","Coded Style Sheets","Creative Style Sheets"], a:0},
-{q:"Full form of JS?", o:["JavaScript","Java System","Java Style","Java Source"], a:0},
-{q:"Full form of PHP?", o:["Hypertext Preprocessor","Preprocessor Hypertext","Pre Hypertext Processor","Hyper Processor Text"], a:0},
-{q:"Full form of API?", o:["Application Programming Interface","Application Program Interface","Application Processing Interface","Application Protocol Interface"], a:0},
-{q:"Full form of IDE?", o:["Integrated Development Environment","Internal Development Environment","Integrated Design Environment","Internal Design Environment"], a:0},
-{q:"Full form of GUI?", o:["Graphical User Interface","General User Interface","Graphical Universal Interface","General Universal Interface"], a:0},
-{q:"Full form of OCR?", o:["Optical Character Recognition","Optical Code Recognition","Optical Character Reading","Original Character Recognition"], a:0},
-{q:"Full form of BIOS?", o:["Basic Input Output System","Binary Input Output System","Basic Internal Output System","Binary Internal Output System"], a:0},
-{q:"Full form of POST?", o:["Power On Self Test","Power On System Test","Primary On Self Test","Primary On System Test"], a:0},
-{q:"Full form of ISP?", o:["Internet Service Provider","Internal Service Provider","Internet System Provider","Internal System Provider"], a:0},
-{q:"Full form of SSL?", o:["Secure Sockets Layer","Secure System Layer","Safe Socket Layer","Secure Socket Link"], a:0},
-{q:"Full form of TLS?", o:["Transport Layer Security","Transfer Layer Security","Transmission Layer Security","Transport Level Security"], a:0},
-{q:"Full form of SSH?", o:["Secure Shell","Safe Shell","Secure System Host","Secure Socket Host"], a:0},
-{q:"Full form of VPN?", o:["Virtual Private Network","Virtual Personal Network","Virtual Public Network","Virtual Protocol Network"], a:0}
-];
+  // Sample Questions (replace/add till 99)
+  const questions = [
+    { q: "HTML stands for?", options: ["Hyper Text Markup Language", "HighText Machine Language", "Hyperlinks Text Mark Language", "None"], answer: 0 },
+    { q: "HTTP stands for?", options: ["HyperText Transfer Protocol", "HighText Transfer Protocol", "Hyper Transfer Text Protocol", "None"], answer: 0 },
+    { q: "CSS is used for?", options: ["Styling web pages", "Database", "Server connection", "None"], answer: 0 }
+    // 👉 Add up to 99 questions in the same format
+  ];
 
-// ==== Script Logic (same as before) ====
-let current=0, answers=new Array(quizData.length).fill(null);
-let timeLeft=60*60, timerInterval, studentName="";
+  let currentQuestion = 0;
+  let answers = new Array(questions.length).fill(null);
+  let submitted = false;
 
-function startQuiz(){
-  studentName=document.getElementById('studentName').value.trim();
-  if(!studentName){alert("Enter your name first!");return;}
-  document.getElementById('loginPage').style.display="none";
-  document.getElementById('quizPage').style.display="block";
-  loadQuestion();
-  buildNav();
-  timerInterval=setInterval(()=>{
-    let m=Math.floor(timeLeft/60), s=timeLeft%60;
-    document.getElementById("timer").textContent=`Time Left: ${m}:${s<10?'0':''}${s}`;
-    timeLeft--; if(timeLeft<0){clearInterval(timerInterval);submitQuiz();}
-  },1000);
-}
-
-function loadQuestion(){
-  const q=quizData[current];
-  const box=document.getElementById('questionBox');
-  box.innerHTML=`<h3>Q${current+1}. ${q.q}</h3>`;
-  let html="";
-  q.o.forEach((opt,i)=>{
-    html+=`<label><input type="radio" name="opt" value="${i}" ${answers[current]==i?"checked":""}>${opt}</label>`;
-  });
-  box.innerHTML+=`<div class="options">${html}</div>`;
-}
-
-function saveAndNext(){
-  const opts=document.getElementsByName("opt");
-  for(const opt of opts){if(opt.checked)answers[current]=parseInt(opt.value);}
-  document.getElementById("circle"+current).classList.toggle("answered",answers[current]!==null);
-  if(current<quizData.length-1){current++;loadQuestion();}
-}
-
-function buildNav(){
-  const nav=document.getElementById("navigation"); nav.innerHTML="";
-  for(let i=0;i<quizData.length;i++){
-    const div=document.createElement("div");
-    div.className="circle"; div.id="circle"+i; div.textContent=i+1;
-    div.onclick=()=>{current=i;loadQuestion();}
-    nav.appendChild(div);
+  function loadQuestion(index) {
+    const quizDiv = document.getElementById("quiz");
+    const q = questions[index];
+    let html = `<div class="question-box"><h3>Q${index+1}. ${q.q}</h3><div class="options">`;
+    q.options.forEach((opt,i)=>{
+      let checked = answers[index]===i ? "checked" : "";
+      html += `<label><input type="radio" name="q${index}" value="${i}" ${checked} onchange="saveAnswer(${index},${i})"> ${opt}</label>`;
+    });
+    html += `</div></div>`;
+    quizDiv.innerHTML = html;
+    updateNav();
   }
-}
 
-function submitQuiz(){
-  clearInterval(timerInterval);
-  let score=0, wrong=[];
-  quizData.forEach((q,i)=>{
-    if(answers[i]===q.a) score++;
-    else wrong.push({q:q.q, sel:answers[i]!==null?q.o[answers[i]]:"Not Answered", corr:q.o[q.a]});
-  });
-  document.getElementById('result').textContent=`You scored ${score} out of ${quizData.length}`;
-  
-  // disable further actions
-  document.getElementById("nextBtn").disabled=true;
-  document.getElementById("submitBtn").disabled=true;
-  const inputs=document.querySelectorAll("input[type=radio]");
-  inputs.forEach(inp=>inp.disabled=true);
+  function saveAnswer(qIndex, optIndex){
+    answers[qIndex] = optIndex;
+    document.getElementById("nav"+qIndex).className = "nav-btn nav-green";
+  }
 
-  downloadCSV(score, wrong);
-}
+  function prevQuestion(){ if(currentQuestion>0){ currentQuestion--; loadQuestion(currentQuestion); } }
+  function nextQuestion(){ if(currentQuestion<questions.length-1){ currentQuestion++; loadQuestion(currentQuestion); } }
 
-function downloadCSV(score, wrong){
-  let now=new Date().toLocaleString();
-  let csv=`Name,Score,DateTime\n"${studentName}",${score},"${now}"\n\nWrong Answers:\nQuestion,Your Answer,Correct Answer\n`;
-  wrong.forEach(w=>{
-    csv+=`"${w.q}","${w.sel}","${w.corr}"\n`;
-  });
-  const blob=new Blob([csv],{type:'text/csv'});
-  const link=document.createElement('a');
-  link.href=URL.createObjectURL(blob);
-  link.download=`${studentName}_result.csv`;
-  link.click();
-}
+  function updateNav(){
+    const navDiv = document.getElementById("questionNav");
+    navDiv.innerHTML="";
+    for(let i=0;i<questions.length;i++){
+      let color = answers[i]==null ? "nav-red" : "nav-green";
+      navDiv.innerHTML += `<button id="nav${i}" class="nav-btn ${color}" onclick="jumpTo(${i})">${i+1}</button>`;
+    }
+  }
+
+  function jumpTo(i){ currentQuestion=i; loadQuestion(i); }
+
+  function submitQuiz(){
+    if(submitted) return;
+    submitted=true;
+    let score=0;
+    questions.forEach((q,i)=>{ if(answers[i]===q.answer) score++; });
+    document.getElementById("result").innerHTML = `You scored ${score} / ${questions.length}`;
+    document.getElementById("quiz").innerHTML="";
+    document.querySelectorAll("button").forEach(btn=>{btn.disabled=true;});
+    document.getElementById("submitBtn").disabled=true;
+  }
+
+  // Timer 60 minutes
+  let time = 60*60;
+  const timerEl=document.getElementById("timer");
+  const timer=setInterval(()=>{
+    if(time<=0){ clearInterval(timer); submitQuiz(); return; }
+    let m=Math.floor(time/60), s=time%60;
+    timerEl.innerText=`Time Left: ${m}:${s<10?"0":""}${s}`;
+    time--;
+  },1000);
+
+  loadQuestion(currentQuestion);
 </script>
 </body>
 </html>
