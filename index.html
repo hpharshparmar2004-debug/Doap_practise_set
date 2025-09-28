@@ -1,234 +1,206 @@
-!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>99 Computer MCQ Quiz</title>
-<style>
-  body {font-family: Arial, sans-serif; background: #f5f7fa; margin: 0; padding: 0;}
-  .container {max-width: 800px; margin: auto; padding: 20px; background: #fff; box-shadow: 0 0 10px rgba(0,0,0,0.1);}
-  h1 {text-align: center; color: #2c3e50;}
-  .question {margin: 20px 0;}
-  .options button {display: block; width: 100%; margin: 5px 0; padding: 10px; text-align: left; border: 1px solid #ccc; background: #ecf0f1; cursor: pointer; border-radius: 5px;}
-  .options button.selected {background: #3498db; color: #fff;}
-  .options button.correct {background: #2ecc71; color: #fff;}
-  .options button.wrong {background: #e74c3c; color: #fff;}
-  .nav-buttons {display: flex; justify-content: space-between; margin: 20px 0;}
-  .nav-buttons button {padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; background: #3498db; color: #fff;}
-  #timer {font-size: 18px; text-align: center; color: #e74c3c;}
-  .question-numbers {text-align: center; margin: 15px 0;}
-  .question-numbers span {display: inline-block; width: 25px; height: 25px; line-height: 25px; margin: 2px; border-radius: 50%; background: red; color: #fff; cursor: pointer;}
-  .question-numbers span.attempted {background: green;}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>99 Questions Quiz</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f7f9fc; margin: 0; padding: 0; }
+    .container { max-width: 900px; margin: auto; padding: 20px; }
+    h1 { text-align: center; color: #003366; }
+    .question-box { background: #fff; padding: 20px; border-radius: 10px; margin-bottom: 20px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
+    .options label { display: block; margin-bottom: 8px; cursor: pointer; }
+    .buttons { text-align: center; margin-top: 20px; }
+    button { background: #007BFF; color: white; border: none; padding: 10px 20px; margin: 5px; border-radius: 8px; cursor: pointer; font-size: 16px; }
+    button:disabled { background: gray; cursor: not-allowed; }
+    .question-nav { display: flex; flex-wrap: wrap; justify-content: center; margin-top: 20px; }
+    .nav-btn { width: 35px; height: 35px; border-radius: 50%; margin: 5px; border: none; color: white; font-weight: bold; cursor: pointer; }
+    .nav-red { background: red; }
+    .nav-green { background: green; }
+    #timer { text-align: center; font-size: 18px; font-weight: bold; margin-bottom: 10px; }
+    #result { text-align: center; font-size: 20px; font-weight: bold; color: #003366; }
+  </style>
 </head>
 <body>
-<div class="container">
-  <h1>99 Computer MCQ Quiz</h1>
-  <div id="timer">Time Left: 60:00</div>
-  <div class="question-numbers" id="qNumbers"></div>
-  <div class="question" id="question"></div>
-  <div class="options" id="options"></div>
-  <div class="nav-buttons">
-    <button id="prevBtn">Previous</button>
-    <button id="nextBtn">Next</button>
-    <button id="submitBtn">Submit</button>
+  <div class="container">
+    <h1>Quiz Portal</h1>
+    <div id="timer">Time Left: 60:00</div>
+    <div id="quiz"></div>
+    <div class="buttons">
+      <button onclick="prevQuestion()">Previous</button>
+      <button onclick="nextQuestion()">Save & Next</button>
+      <button id="submitBtn" onclick="submitQuiz()">Submit</button>
+    </div>
+    <div class="question-nav" id="questionNav"></div>
+    <div id="result"></div>
   </div>
-  <div id="result" style="text-align:center; font-size:20px; margin-top:20px;"></div>
-</div>
 
 <script>
-const quiz = [
-{q:"HTML stands for:",options:["HighText Machine Language","HyperText Markup Language","Hyperlinks Text Mark Language","None"],answer:1},
-{q:"HTTP stands for:",options:["HyperText Transfer Protocol","HighText Transfer Protocol","Hyper Tool Transfer Protocol","None"],answer:0},
-{q:"URL means:",options:["Uniform Resource Locator","Uniform Retrieval Locator","Universal Resource Location","None"],answer:0},
-{q:"IP stands for:",options:["Internet Process","Internet Protocol","Internal Protocol","None"],answer:1},
-{q:"DNS means:",options:["Domain Name Server","Direct Network Service","Domain Naming System","Data Network Service"],answer:0},
-{q:"SMTP stands for:",options:["Simple Mail Transfer Protocol","System Mail Transfer Process","Simple Message Transmission Protocol","None"],answer:0},
-{q:"PDF means:",options:["Portable Document Format","Portable Data File","Public Document File","None"],answer:0},
-{q:"BIOS stands for:",options:["Basic Input Output System","Binary Input Output Service","Basic Integrated Output System","None"],answer:0},
-{q:"VPN means:",options:["Virtual Private Network","Virtual Protocol Network","Variable Private Node","None"],answer:0},
-{q:"AI stands for:",options:["Artificial Intelligence","Automatic Input","Advanced Information","None"],answer:0},
-{q:"SQL means:",options:["Structured Query Language","Simple Query Language","Sequential Query Logic","None"],answer:0},
-{q:"GUI stands for:",options:["Graphical User Interface","General User Interaction","Global User Input","None"],answer:0},
-{q:"USB means:",options:["Universal Serial Bus","Uniform Standard Bus","United Serial Box","None"],answer:0},
-{q:"LAN means:",options:["Local Access Network","Local Area Network","Long Area Node","None"],answer:1},
-{q:"WAN means:",options:["Wide Area Network","World Area Node","Wide Access Network","None"],answer:0},
-{q:"The shortcut key to cut in MS Word is:",options:["Ctrl + X","Ctrl + C","Ctrl + V","Ctrl + Z"],answer:0},
-{q:"The shortcut key to paste is:",options:["Ctrl + P","Ctrl + V","Ctrl + C","Ctrl + D"],answer:1},
-{q:"The shortcut key to undo is:",options:["Ctrl + U","Ctrl + Z","Ctrl + Y","Ctrl + N"],answer:1},
-{q:"The shortcut key to save a document is:",options:["Ctrl + V","Ctrl + S","Ctrl + D","Ctrl + P"],answer:1},
-{q:"The shortcut key to print is:",options:["Ctrl + O","Ctrl + P","Ctrl + I","Ctrl + R"],answer:1},
-{q:"The extension of Word file is:",options:[".xls",".ppt",".docx",".mdb"],answer:2},
-{q:"The extension of Excel file is:",options:[".xls / .xlsx",".docx",".pptx",".txt"],answer:0},
-{q:"The extension of PowerPoint file is:",options:[".docx",".pptx",".mdb",".exe"],answer:1},
-{q:"The extension of Access database is:",options:[".mdb",".accdb",".db","All of these"],answer:3},
-{q:"The extension of Paint file is usually:",options:[".png",".jpg",".bmp","All of these"],answer:3},
-{q:"In MS Word, to make text bold, shortcut key is:",options:["Ctrl + B","Ctrl + U","Ctrl + I","Ctrl + N"],answer:0},
-{q:"To underline text:",options:["Ctrl + I","Ctrl + U","Ctrl + B","Ctrl + O"],answer:1},
-{q:"To italicize text:",options:["Ctrl + I","Ctrl + O","Ctrl + U","Ctrl + E"],answer:0},
-{q:"To align text center:",options:["Ctrl + C","Ctrl + E","Ctrl + L","Ctrl + R"],answer:1},
-{q:"To align text right:",options:["Ctrl + R","Ctrl + L","Ctrl + E","Ctrl + J"],answer:0},
-{q:"To justify text:",options:["Ctrl + J","Ctrl + E","Ctrl + C","Ctrl + R"],answer:0},
-{q:"In Excel, formula starts with:",options:["=","+","–","*"],answer:0},
-{q:"In Excel, SUM formula is written as:",options:["=SUM(A1:A10)","SUM(A1–A10)","=ADD(A1 TO A10)","=TOTAL(A1:A10)"],answer:0},
-{q:"In Excel, multiplication formula:",options:["=A1*B1","A1×B1","MULT(A1,B1)","PRODUCT A1 B1"],answer:0},
-{q:"In Excel, average formula:",options:["=AVERAGE(A1:A10)","AVERAGE(A1 TO A10)","AVG(A1:A10)","=MEAN(A1:A10)"],answer:0},
-{q:"In Excel, maximum value formula:",options:["=MAX(A1:A10)","=MAXIMUM(A1:A10)","=LARGE(A1:A10)","=TOP(A1:A10)"],answer:0},
-{q:"In Excel, minimum value formula:",options:["=MIN(A1:A10)","=MINIMUM(A1:A10)","=LOW(A1:A10)","=BOTTOM(A1:A10)"],answer:0},
-{q:"Shortcut key to create new file:",options:["Ctrl + N","Ctrl + O","Ctrl + Shift + N","Alt + N"],answer:0},
-{q:"Shortcut key to open file:",options:["Ctrl + O","Ctrl + N","Ctrl + Shift + O","Alt + O"],answer:0},
-{q:"Shortcut key to select all:",options:["Ctrl + S","Ctrl + A","Ctrl + C","Ctrl + Q"],answer:1},
-{q:"Shortcut key to redo:",options:["Ctrl + Y","Ctrl + Z","Ctrl + X","Ctrl + U"],answer:0},
-{q:"Which is not an operating system?",options:["Windows","Linux","MS Office","MacOS"],answer:2},
-{q:"Which is an input device?",options:["Monitor","Printer","Keyboard","Speaker"],answer:2},
-{q:"Which is an output device?",options:["Mouse","Scanner","Projector","Microphone"],answer:2},
-{q:"1 Kilobyte =",options:["100 bytes","1024 bytes","1000 bytes","1240 bytes"],answer:1},
-{q:"1 Megabyte =",options:["1000 KB","1024 KB","1200 KB","512 KB"],answer:1},
-{q:"1 Gigabyte =",options:["1000 MB","1024 MB","1200 MB","512 MB"],answer:1},
-{q:"1 Terabyte =",options:["1000 GB","1024 GB","2048 GB","512 GB"],answer:1},
-{q:"First generation computers used:",options:["Transistors","Vacuum tubes","Microprocessors","Integrated Circuits"],answer:1},
-{q:"Second generation computers used:",options:["Transistors","Vacuum tubes","IC","Microprocessors"],answer:0},
-{q:"Third generation computers used:",options:["IC (Integrated Circuits)","Transistors","Vacuum Tubes","Microprocessors"],answer:0},
-{q:"Fourth generation computers used:",options:["Microprocessors","IC","Transistors","Vacuum Tubes"],answer:0},
-{q:"Fifth generation computers are based on:",options:["Artificial Intelligence","IC","Vacuum Tubes","Transistors"],answer:0},
-{q:"Shortcut key to refresh is:",options:["F5","Ctrl + F5","Ctrl + R","Alt + F5"],answer:0},
-{q:"Shortcut key to rename file is:",options:["F2","F5","F4","F6"],answer:0},
-{q:"Shortcut key to search is:",options:["Ctrl + F","Ctrl + S","Ctrl + H","Ctrl + Q"],answer:0},
-{q:"Shortcut key for replace is:",options:["Ctrl + R","Ctrl + H","Ctrl + F","Ctrl + L"],answer:1},
-{q:"Shortcut key to close window is:",options:["Alt + F4","Ctrl + W","Ctrl + Q","All of these"],answer:3},
-{q:"Shortcut key to minimize all windows is:",options:["Win + D","Ctrl + D","Alt + D","Shift + D"],answer:0},
-{q:"MS Word default file extension is:",options:[".docx",".xlsx",".pptx",".accdb"],answer:0},
-{q:"MS Excel default file extension is:",options:[".docx",".xlsx",".pptx",".mdb"],answer:1},
-{q:"MS PowerPoint default extension is:",options:[".pptx",".docx",".mdb",".txt"],answer:0},
-{q:"MS Access default extension is:",options:[".accdb",".mdb",".docx",".xlsx"],answer:0},
-{q:"Default alignment in Word is:",options:["Left","Right","Center","Justify"],answer:0},
-{q:"Default font in MS Word (latest versions):",options:["Calibri","Arial","Times New Roman","Verdana"],answer:0},
-{q:"Default font size in MS Word is:",options:["11","12","10","14"],answer:0},
-{q:"In PowerPoint, to start slideshow shortcut is:",options:["F5","Shift + F5","Alt + F5","Ctrl + F5"],answer:0},
-{q:"To insert new slide in PowerPoint:",options:["Ctrl + M","Ctrl + N","Ctrl + S","Ctrl + Shift + M"],answer:0},
-{q:"To duplicate slide in PowerPoint:",options:["Ctrl + D","Ctrl + Shift + D","Alt + D","Ctrl + M"],answer:0},
-{q:"To add new worksheet in Excel:",options:["Shift + F11","Ctrl + N","Ctrl + W","Alt + F11"],answer:0},
-{q:"The first cell in Excel sheet is:",options:["A1","A0","B1","1A"],answer:0},
-{q:"Rows in Excel 2016 are:",options:["1,048,576","65,536","10,000","99,999"],answer:0},
-{q:"Columns in Excel 2016 are:",options:["16,384","256","512","1024"],answer:0},
-{q:"Maximum Zoom percentage in MS Word is:",options:["500%","100%","200%","300%"],answer:0},
-{q:"Minimum Zoom percentage in Word is:",options:["10%","50%","25%","5%"],answer:0},
-{q:"In Word, Header is inserted from:",options:["Insert Tab","Layout Tab","Home Tab","References Tab"],answer:0},
-{q:"In Word, Footer is inserted from:",options:["Insert Tab","Page Layout","References","Review"],answer:0},
-{q:"In Word, Page Number is inserted from:",options:["Insert Tab","Home Tab","References Tab","Layout Tab"],answer:0},
-{q:"In Excel, Chart option is available in:",options:["Insert Tab","Home Tab","Data Tab","Review Tab"],answer:0},
-{q:"In Excel, Conditional Formatting is in:",options:["Home Tab","Insert Tab","Data Tab","Review Tab"],answer:0},
-{q:"In PowerPoint, Transition option is available in:",options:["Transitions Tab","Animations Tab","Slide Show Tab","Insert Tab"],answer:0},
-{q:"In PowerPoint, Animation Pane is found in:",options:["Animations Tab","Insert Tab","View Tab","Review Tab"],answer:0},
-{q:"In MS Access, tables are used to store:",options:["Data","Queries","Forms","Reports"],answer:0},
-{q:"In MS Access, Queries are used to:",options:["Retrieve Data","Store Data","Print Data","Format Data"],answer:0},
-{q:"In MS Access, Forms are used to:",options:["Input Data","Print Data","Display Charts","Create Reports"],answer:0},
-{q:"In MS Access, Reports are used to:",options:["Print and Present Data","Input Data","Store Data","Query Data"],answer:0},
-{q:"MS Paint is used for:",options:["Drawing and Editing Pictures","Creating Tables","Data Analysis","Database Management"],answer:0},
-{q:"The shortcut key for Paint Eraser Tool is:",options:["E","Ctrl + E","Shift + E","Alt + E"],answer:0},
-{q:"The default file format of Paint is:",options:[".bmp",".jpg",".png",".gif"],answer:0},
-{q:"The first mechanical computer is known as:",options:["Analytical Engine","ENIAC","UNIVAC","Difference Engine"],answer:0},
-{q:"The father of computer is:",options:["Charles Babbage","Alan Turing","Bill Gates","Steve Jobs"],answer:0},
-{q:"The first programming language is:",options:["FORTRAN","C","BASIC","COBOL"],answer:0},
-{q:"The shortcut key to check spelling in Word is:",options:["F7","Shift + F7","Ctrl + F7","Alt + F7"],answer:0},
-{q:"Shortcut key for Thesaurus in Word is:",options:["Shift + F7","F7","Alt + F7","Ctrl + F7"],answer:0},
-{q:"In Word, mail merge is used for:",options:["Sending bulk letters","Printing graphics","Creating templates","Inserting pictures"],answer:0},
-{q:"In Excel, Freeze Panes option is in:",options:["View Tab","Insert Tab","Data Tab","Review Tab"],answer:0},
-{q:"In Excel, Data Validation is found in:",options:["Data Tab","Home Tab","Insert Tab","View Tab"],answer:0},
-{q:"In Excel, Filter option is available in:",options:["Data Tab","Review Tab","View Tab","Insert Tab"],answer:0},
-{q:"In PowerPoint, Rehearse Timings option is in:",options:["Slide Show Tab","Animations Tab","View Tab","Transitions Tab"],answer:0}
-];
+  const questions = [
+    // Part A: Computer Full Forms (15)
+    {q:"HTML stands for?", options:["Hyper Text Markup Language","HighText Machine Language","Hyperlinks Text Mark Language","None"], answer:0},
+    {q:"HTTP stands for?", options:["HyperText Transfer Protocol","HighText Transfer Protocol","Hyper Tool Transfer Protocol","None"], answer:0},
+    {q:"URL means?", options:["Uniform Resource Locator","Uniform Retrieval Locator","Universal Resource Location","None"], answer:0},
+    {q:"IP stands for?", options:["Internet Protocol","Internet Provider","Internal Protocol","None"], answer:0},
+    {q:"WWW stands for?", options:["World Wide Web","World Web Wide","Wide World Web","None"], answer:0},
+    {q:"DNS stands for?", options:["Domain Name System","Domain Number Service","Digital Name System","None"], answer:0},
+    {q:"LAN means?", options:["Local Area Network","Long Area Network","Large Area Network","None"], answer:0},
+    {q:"WAN means?", options:["Wide Area Network","Wireless Area Network","Web Access Network","None"], answer:0},
+    {q:"GUI stands for?", options:["Graphical User Interface","Graph User Interface","General User Interface","None"], answer:0},
+    {q:"BIOS means?", options:["Basic Input Output System","Binary Input Output System","Basic Internal Output System","None"], answer:0},
+    {q:"URL stands for?", options:["Uniform Resource Locator","Uniform Retrieval Locator","Universal Resource Location","None"], answer:0},
+    {q:"VPN stands for?", options:["Virtual Private Network","Virtual Protected Network","Visual Private Network","None"], answer:0},
+    {q:"HTTPs stands for?", options:["HyperText Transfer Protocol Secure","HyperText Transfer Protected Secure","Hyper Transfer Text Secure","None"], answer:0},
+    {q:"SMTP means?", options:["Simple Mail Transfer Protocol","Simple Mail Transmission Protocol","Secure Mail Transfer Protocol","None"], answer:0},
+    {q:"POP stands for?", options:["Post Office Protocol","Post Office Process","Protocol of Post","None"], answer:0},
 
-let current = 0;
-let answers = Array(quiz.length).fill(null);
-const questionEl = document.getElementById('question');
-const optionsEl = document.getElementById('options');
-const qNumbersEl = document.getElementById('qNumbers');
-const resultEl = document.getElementById('result');
-const prevBtn = document.getElementById('prevBtn');
-const nextBtn = document.getElementById('nextBtn');
-const submitBtn = document.getElementById('submitBtn');
+    // Part B: MS Word (10)
+    {q:"Shortcut for Bold text?", options:["Ctrl+B","Ctrl+I","Ctrl+U","Ctrl+P"], answer:0},
+    {q:"Shortcut for Italic text?", options:["Ctrl+I","Ctrl+B","Ctrl+U","Ctrl+L"], answer:0},
+    {q:"Shortcut for Underline text?", options:["Ctrl+U","Ctrl+B","Ctrl+I","Ctrl+R"], answer:0},
+    {q:"Shortcut to Save document?", options:["Ctrl+S","Ctrl+O","Ctrl+P","Ctrl+N"], answer:0},
+    {q:"Shortcut to Open document?", options:["Ctrl+O","Ctrl+S","Ctrl+N","Ctrl+P"], answer:0},
+    {q:"Shortcut for Print?", options:["Ctrl+P","Ctrl+S","Ctrl+O","Ctrl+N"], answer:0},
+    {q:"Default file extension of Word?", options:[".docx",".txt",".xls",".ppt"], answer:0},
+    {q:"View to see multiple pages?", options:["Print Layout","Web Layout","Outline","Draft"], answer:0},
+    {q:"Insert page number?", options:["Insert > Page Number","Insert > Header","Insert > Footer","Insert > Table"], answer:0},
+    {q:"Shortcut for Find?", options:["Ctrl+F","Ctrl+H","Ctrl+G","Ctrl+N"], answer:0},
 
-// Timer
-let time = 60 * 60; // 60 minutes
-const timerEl = document.getElementById('timer');
-function startTimer() {
-  const interval = setInterval(() => {
-    let min = Math.floor(time/60);
-    let sec = time % 60;
-    timerEl.textContent = `Time Left: ${min.toString().padStart(2,'0')}:${sec.toString().padStart(2,'0')}`;
-    time--;
-    if(time < 0) { clearInterval(interval); submitQuiz(); }
-  }, 1000);
-}
+    // Part C: MS Excel (50)
+    {q:"Excel is a?", options:["Spreadsheet","Word Processor","Database","Browser"], answer:0},
+    {q:"Default extension of Excel?", options:[".xlsx",".xls",".docx",".pptx"], answer:0},
+    {q:"Formula to sum A1 to A5?", options:["=SUM(A1:A5)","=ADD(A1:A5)","=SUMM(A1:A5)","=TOTAL(A1:A5)"], answer:0},
+    {q:"Shortcut to insert new sheet?", options:["Shift+F11","Ctrl+N","Ctrl+S","Alt+N"], answer:0},
+    {q:"To create chart?", options:["Insert > Chart","Data > Chart","View > Chart","Format > Chart"], answer:0},
+    {q:"What is cell address of row 3 column B?", options:["B3","C3","A3","3B"], answer:0},
+    {q:"Shortcut for Bold?", options:["Ctrl+B","Ctrl+I","Ctrl+U","Ctrl+S"], answer:0},
+    {q:"AutoSum shortcut?", options:["Alt+=","Ctrl+S","Ctrl+Shift+A","Shift+S"], answer:0},
+    {q:"Freeze Panes location?", options:["View > Freeze Panes","Insert > Freeze Panes","Format > Freeze Panes","Data > Freeze Panes"], answer:0},
+    {q:"Filter shortcut?", options:["Ctrl+Shift+L","Ctrl+F","Alt+F","Ctrl+Shift+F"], answer:0},
+    {q:"Function to find max?", options:["MAX","MIN","SUM","AVERAGE"], answer:0},
+    {q:"Function to find average?", options:["AVERAGE","SUM","MAX","MIN"], answer:0},
+    {q:"Function to round number?", options:["ROUND","CEILING","FLOOR","INT"], answer:0},
+    {q:"Function to count numbers?", options:["COUNT","COUNTA","COUNTIF","SUM"], answer:0},
+    {q:"Shortcut to Go To?", options:["Ctrl+G","Ctrl+H","Ctrl+F","Ctrl+N"], answer:0},
+    {q:"Format cell shortcut?", options:["Ctrl+1","Ctrl+2","Ctrl+3","Ctrl+4"], answer:0},
+    {q:"Insert hyperlink?", options:["Ctrl+K","Ctrl+H","Ctrl+L","Ctrl+I"], answer:0},
+    {q:"To protect sheet?", options:["Review > Protect Sheet","Data > Protect Sheet","Format > Protect Sheet","View > Protect Sheet"], answer:0},
+    {q:"Shortcut to undo?", options:["Ctrl+Z","Ctrl+Y","Ctrl+X","Ctrl+C"], answer:0},
+    {q:"Shortcut to redo?", options:["Ctrl+Y","Ctrl+Z","Ctrl+X","Ctrl+C"], answer:0},
+    {q:"Shortcut to cut?", options:["Ctrl+X","Ctrl+C","Ctrl+V","Ctrl+Z"], answer:0},
+    {q:"Shortcut to copy?", options:["Ctrl+C","Ctrl+X","Ctrl+V","Ctrl+Z"], answer:0},
+    {q:"Shortcut to paste?", options:["Ctrl+V","Ctrl+C","Ctrl+X","Ctrl+Z"], answer:0},
+    {q:"Select entire column?", options:["Ctrl+Space","Shift+Space","Alt+Space","Ctrl+Shift+Space"], answer:0},
+    {q:"Select entire row?", options:["Shift+Space","Ctrl+Space","Alt+Space","Ctrl+Shift+Space"], answer:0},
+    {q:"Insert comment?", options:["Shift+F2","Ctrl+F2","Alt+F2","F2"], answer:0},
+    {q:"Remove duplicate shortcut?", options:["Data > Remove Duplicates","Format > Remove Duplicates","Insert > Remove Duplicates","Review > Remove Duplicates"], answer:0},
+    {q:"Shortcut for Go To Special?", options:["Ctrl+G then Special","Ctrl+H","Ctrl+F","Ctrl+N"], answer:0},
+    {q:"Wrap text location?", options:["Home > Wrap Text","Format > Wrap Text","Insert > Wrap Text","Data > Wrap Text"], answer:0},
+    {q:"Merge cells location?", options:["Home > Merge & Center","Insert > Merge","Format > Merge","Data > Merge"], answer:0},
+    {q:"Conditional Formatting location?", options:["Home > Conditional Formatting","Insert > Conditional Formatting","Data > Conditional Formatting","Format > Conditional Formatting"], answer:0},
+    {q:"Sort ascending shortcut?", options:["Alt+A then S","Ctrl+S","Ctrl+Shift+S","Alt+S"], answer:0},
+    {q:"Sort descending shortcut?", options:["Alt+A then O","Ctrl+S","Ctrl+Shift+S","Alt+O"], answer:0},
+    {q:"Insert row shortcut?", options:["Alt+I then R","Ctrl+R","Ctrl+Shift+R","Alt+R"], answer:0},
+    {q:"Insert column shortcut?", options:["Alt+I then C","Ctrl+C","Ctrl+Shift+C","Alt+C"], answer:0},
+    {q:"Delete row shortcut?", options:["Alt+E then D","Ctrl+D","Ctrl+Shift+D","Alt+R"], answer:0},
+    {q:"Delete column shortcut?", options:["Alt+E then C","Ctrl+C","Ctrl+Shift+C","Alt+C"], answer:0},
+    {q:"Go to first cell?", options:["Ctrl+Home","Ctrl+End","Alt+Home","Alt+End"], answer:0},
+    {q:"Go to last cell?", options:["Ctrl+End","Ctrl+Home","Alt+End","Alt+Home"], answer:0},
+    {q:"Name box is used for?", options:["Cell reference","Cell value","Formatting","Data validation"], answer:0},
+    {q:"Sheet tab is located?", options:["Bottom","Top","Left","Right"], answer:0},
+    {q:"Formula bar is located?", options:["Top","Bottom","Left","Right"], answer:0},
+    {q:"Workbook contains?", options:["Sheets","Cells","Rows","Columns"], answer:0},
+    {q:"Cell address uses?", options:["Column letter & row number","Row letter & column number","Only column","Only row"], answer:0},
+    {q:"Shortcut for page layout view?", options:["Alt+P","Ctrl+P","Alt+L","Ctrl+L"], answer:0},
+    {q:"Pivot table location?", options:["Insert > PivotTable","Data > PivotTable","Format > PivotTable","Review > PivotTable"], answer:0},
+    {q:"Shortcut to refresh pivot?", options:["Alt+F5","Ctrl+R","Ctrl+Shift+R","Alt+R"], answer:0},
+    {q:"To print selected area?", options:["File > Print > Selection","File > Print > Entire Sheet","Home > Print","Data > Print"], answer:0},
+    {q:"Shortcut for zoom?", options:["Alt+W then Q","Ctrl+Z","Ctrl+Shift+Z","Alt+Z"], answer:0},
 
-// Question numbers
-quiz.forEach((_, i) => {
-  let span = document.createElement('span');
-  span.textContent = i+1;
-  span.addEventListener('click', () => { current = i; loadQuestion(); });
-  qNumbersEl.appendChild(span);
-});
+    // Part D: Notepad & WordPad (24)
+    {q:"Notepad is a?", options:["Text Editor","Spreadsheet","Database","Browser"], answer:0},
+    {q:"WordPad is a?", options:["Word Processor","Spreadsheet","Database","Browser"], answer:0},
+    {q:"Shortcut to save in Notepad?", options:["Ctrl+S","Ctrl+P","Ctrl+O","Ctrl+N"], answer:0},
+    {q:"Shortcut to open file in Notepad?", options:["Ctrl+O","Ctrl+S","Ctrl+N","Ctrl+P"], answer:0},
+    {q:"Default extension of Notepad?", options:[".txt",".doc",".xls",".ppt"], answer:0},
+    {q:"Default extension of WordPad?", options:[".rtf",".docx",".txt",".xls"], answer:0},
+    {q:"Shortcut for print in WordPad?", options:["Ctrl+P","Ctrl+S","Ctrl+O","Ctrl+N"], answer:0},
+    {q:"Word wrap location?", options:["Format > Word Wrap","File > Word Wrap","Edit > Word Wrap","View > Word Wrap"], answer:0},
+    {q:"Font change location?", options:["Format > Font","File > Font","Edit > Font","View > Font"], answer:0},
+    {q:"Undo shortcut?", options:["Ctrl+Z","Ctrl+Y","Ctrl+X","Ctrl+C"], answer:0},
+    {q:"Redo shortcut?", options:["Ctrl+Y","Ctrl+Z","Ctrl+X","Ctrl+C"], answer:0},
+    {q:"Cut shortcut?", options:["Ctrl+X","Ctrl+C","Ctrl+V","Ctrl+Z"], answer:0},
+    {q:"Copy shortcut?", options:["Ctrl+C","Ctrl+X","Ctrl+V","Ctrl+Z"], answer:0},
+    {q:"Paste shortcut?", options:["Ctrl+V","Ctrl+C","Ctrl+X","Ctrl+Z"], answer:0},
+    {q:"Select all shortcut?", options:["Ctrl+A","Ctrl+S","Ctrl+N","Ctrl+P"], answer:0},
+    {q:"Find shortcut?", options:["Ctrl+F","Ctrl+H","Ctrl+G","Ctrl+N"], answer:0},
+    {q:"Replace shortcut?", options:["Ctrl+H","Ctrl+F","Ctrl+G","Ctrl+N"], answer:0},
+    {q:"Delete text?", options:["Del","Backspace","Ctrl+D","Ctrl+X"], answer:0},
+    {q:"Insert date/time?", options:["F5","F2","Ctrl+D","Ctrl+T"], answer:0},
+    {q:"Zoom in/out?", options:["Ctrl+Mouse wheel","Ctrl+Z","Ctrl+Shift+Z","Alt+Z"], answer:0},
+    {q:"Close file?", options:["Alt+F4","Ctrl+W","Ctrl+F4","Ctrl+Q"], answer:0},
+    {q:"Switch between open files?", options:["Alt+Tab","Ctrl+Tab","Alt+Shift","Ctrl+Shift"], answer:0},
+    {q:"About Notepad location?", options:["Help > About Notepad","File > About","Edit > About","Format > About"], answer:0},
+  ];
 
-function loadQuestion() {
-  let q = quiz[current];
-  questionEl.textContent = `${current+1}. ${q.q}`;
-  optionsEl.innerHTML = '';
-  q.options.forEach((opt, i) => {
-    let btn = document.createElement('button');
-    btn.textContent = opt;
-    if(answers[current] === i) btn.classList.add('selected');
-    btn.addEventListener('click', () => selectAnswer(i, btn));
-    optionsEl.appendChild(btn););
-  updateQuestionNumbers();
-}
+  let currentQuestion = 0;
+  let answers = new Array(questions.length).fill(null);
+  let submitted = false;
 
-function selectAnswer(index, btn) {
-  if (answers[current] !== null) return; // Lock answer after selection
-  answers[current] = index;
-  Array.from(optionsEl.children).forEach(b => b.classList.remove('selected'));
-  btn.classList.add('selected');
-  // Mark as attempted
-  qNumbersEl.children[current].classList.add('attempted');
-}
+  function loadQuestion(index) {
+    const quizDiv = document.getElementById("quiz");
+    const q = questions[index];
+    let html = `<div class="question-box"><h3>Q${index+1}. ${q.q}</h3><div class="options">`;
+    q.options.forEach((opt,i)=>{
+      let checked = answers[index]===i ? "checked" : "";
+      html += `<label><input type="radio" name="q${index}" value="${i}" ${checked} onchange="saveAnswer(${index},${i})"> ${opt}</label>`;
+    });
+    html += `</div></div>`;
+    quizDiv.innerHTML = html;
+    updateNav();
+  }
 
-function updateQuestionNumbers() {
-  Array.from(qNumbersEl.children).forEach((span, i) => {
-    span.classList.toggle('attempted', answers[i] !== null);
-  });
-}
+  function saveAnswer(qIndex, optIndex){
+    answers[qIndex] = optIndex;
+    document.getElementById("nav"+qIndex).className = "nav-btn nav-green";
+  }
 
-prevBtn.addEventListener('click', () => {
-  if (current > 0) { current--; loadQuestion(); }
-});
+  function prevQuestion(){ if(currentQuestion>0){ currentQuestion--; loadQuestion(currentQuestion); } }
+  function nextQuestion(){ if(currentQuestion<questions.length-1){ currentQuestion++; loadQuestion(currentQuestion); } }
 
-nextBtn.addEventListener('click', () => {
-  if (current < quiz.length - 1) { current++; loadQuestion(); }
-});
-
-submitBtn.addEventListener('click', submitQuiz);
-
-function submitQuiz() {
-  let score = 0;
-  quiz.forEach((q, i) => {
-    if (answers[i] === q.answer) score++;
-  });
-  resultEl.textContent = `You scored ${score} out of ${quiz.length}`;
-  // Show correct/wrong answers
-  optionsEl.innerHTML = '';
-  questionEl.textContent = 'Quiz Completed!';
-  Array.from(qNumbersEl.children).forEach((span, i) => {
-    if (answers[i] === quiz[i].answer) {
-      span.style.background = 'green';
-    } else {
-      span.style.background = 'red';
+  function updateNav(){
+    const navDiv = document.getElementById("questionNav");
+    navDiv.innerHTML="";
+    for(let i=0;i<questions.length;i++){
+      let color = answers[i]==null ? "nav-red" : "nav-green";
+      navDiv.innerHTML += `<button id="nav${i}" class="nav-btn ${color}" onclick="jumpTo(${i})">${i+1}</button>`;
     }
-  });
-}
+  }
 
-// Initial load
-loadQuestion();
-startTimer();
+  function jumpTo(i){ currentQuestion=i; loadQuestion(i); }
+
+  function submitQuiz(){
+    if(submitted) return;
+    submitted=true;
+    let score=0;
+    questions.forEach((q,i)=>{ if(answers[i]===q.answer) score++; });
+    document.getElementById("result").innerHTML = `You scored ${score} / ${questions.length}`;
+    document.getElementById("quiz").innerHTML = "";
+    document.querySelectorAll("button").forEach(btn => { btn.disabled = true; });
+    document.getElementById("submitBtn").disabled = true;
+  }
+
+  // Timer 60 minutes
+  let time = 60 * 60;
+  const timerEl = document.getElementById("timer");
+  const timer = setInterval(() => {
+    if (time <= 0) { clearInterval(timer); submitQuiz(); return; }
+    let m = Math.floor(time / 60), s = time % 60;
+    timerEl.innerText = `Time Left: ${m}:${s < 10 ? "0" : ""}${s}`;
+    time--;
+  }, 1000);
+
+  loadQuestion(currentQuestion);
 </script>
 </body>
 </html>
