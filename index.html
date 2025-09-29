@@ -105,13 +105,6 @@ const questions = [
 {q:"WWW stands for:", options:["World Wide Web","Web Wide World","Wide Web World","None"], answer:0},
 {q:"CSS stands for:", options:["Cascading Style Sheets","Computer Style Sheets","Creative Style Sheets","None"], answer:0},
 {q:"JS stands for:", options:["JavaScript","JavaSource","JustScript","None"], answer:0},
-{q:"HTML stands for:", options:["HighText Machine Language","HyperText Markup Language","Hyperlinks Text Mark Language","None"], answer:1},
-{q:"HTTP stands for:", options:["HyperText Transfer Protocol","HighText Transfer Protocol","Hyper Tool Transfer Protocol","None"], answer:0},
-{q:"URL means:", options:["Uniform Resource Locator","Uniform Retrieval Locator","Universal Resource Location","None"], answer:0},
-{q:"IP stands for:", options:["Internet Protocol","Internal Protocol","Internet Process","None"], answer:0},
-{q:"WWW stands for:", options:["World Wide Web","Web Wide World","Wide Web World","None"], answer:0},
-{q:"CSS stands for:", options:["Cascading Style Sheets","Computer Style Sheets","Creative Style Sheets","None"], answer:0},
-{q:"JS stands for:", options:["JavaScript","JavaSource","JustScript","None"], answer:0},
 {q:"HTTP uses port:", options:["80","21","443","25"], answer:0},
 {q:"SMTP stands for:", options:["Simple Mail Transfer Protocol","Simple Messaging Transfer Protocol","Simple Mail Transmission Protocol","None"], answer:0},
 {q:"FTP stands for:", options:["File Transfer Protocol","File Text Protocol","File Transmission Protocol","None"], answer:0},
@@ -146,7 +139,6 @@ const questions = [
 {q:"Which is a search engine?", options:["Google","Chrome","Firefox","Edge"], answer:0},
 {q:"Which is an input device?", options:["Keyboard","Printer","Monitor","Speaker"], answer:0},
 {q:"Which is output device?", options:["Monitor","Keyboard","Mouse","Scanner"], answer:0},
-{q:"BIOS is used for?", options:["System boot","Data storage","File transfer","Printing"], answer:0},
 {q:"RAM is?", options:["Volatile memory","Non-volatile memory","Permanent storage","Input device"], answer:0},
 {q:"ROM is?", options:["Non-volatile memory","Volatile memory","Temporary storage","Output device"], answer:0},
 {q:"Motherboard connects?", options:["All computer components","Only CPU","Only GPU","Only RAM"], answer:0},
@@ -209,10 +201,11 @@ const questions = [
 {q:"Terabyte is?", options:["1024 GB","1000 GB","512 GB","2048 GB"], answer:0}
 ];
 
+// Quiz logic
 let currentQuestion = 0;
 let answers = Array(questions.length).fill(null);
 let timer;
-let time = 60 * 60;
+let time = 60*60;
 
 function startQuiz(){
     const name = document.getElementById('studentName').value;
@@ -224,9 +217,7 @@ function startQuiz(){
         renderQuestion();
         renderQuestionNumbers();
         startTimer();
-    } else {
-        alert("Please enter your name and email.");
-    }
+    } else { alert("Please enter your name and email."); }
 }
 
 function renderQuestion(){
@@ -238,18 +229,13 @@ function renderQuestion(){
         const btn = document.createElement('button');
         btn.innerText = opt;
         if(answers[currentQuestion] === i) btn.classList.add('selected');
-        btn.onclick = ()=>{ answers[currentQuestion] = i; updateQuestionNumbers(); renderQuestion(); };
+        btn.onclick = ()=>{ answers[currentQuestion]=i; updateQuestionNumbers(); renderQuestion(); };
         optionsBox.appendChild(btn);
     });
 }
 
-function nextQuestion(){
-    if(currentQuestion < questions.length - 1){ currentQuestion++; renderQuestion(); }
-}
-
-function prevQuestion(){
-    if(currentQuestion > 0){ currentQuestion--; renderQuestion(); }
-}
+function nextQuestion(){ if(currentQuestion < questions.length-1){ currentQuestion++; renderQuestion(); } }
+function prevQuestion(){ if(currentQuestion>0){ currentQuestion--; renderQuestion(); } }
 
 function renderQuestionNumbers(){
     const container = document.getElementById('questionNumbers');
@@ -257,8 +243,8 @@ function renderQuestionNumbers(){
     questions.forEach((q,i)=>{
         const span = document.createElement('span');
         span.innerText = i+1;
-        if(answers[i] !== null) span.classList.add('attempted');
-        span.onclick = ()=>{ currentQuestion = i; renderQuestion(); };
+        if(answers[i]!==null) span.classList.add('attempted');
+        span.onclick = ()=>{ currentQuestion=i; renderQuestion(); };
         container.appendChild(span);
     });
 }
@@ -269,9 +255,8 @@ function submitQuiz(){
     if(!confirm("Are you sure you want to submit the quiz?")) return;
     clearInterval(timer);
     let score = 0;
-    questions.forEach((q,i)=>{ if(answers[i] === q.answer) score++; });
+    questions.forEach((q,i)=>{ if(answers[i]===q.answer) score++; });
     document.getElementById('quizBox').innerHTML = `<h1>Quiz Submitted</h1><h2>Your Score: ${score} / ${questions.length}</h2>`;
-    // Optional: send score via EmailJS
 }
 
 function startTimer(){
@@ -280,7 +265,7 @@ function startTimer(){
         let sec = time % 60;
         document.getElementById('timer').innerText = `${min.toString().padStart(2,'0')}:${sec.toString().padStart(2,'0')}`;
         time--;
-        if(time < 0){ clearInterval(timer); submitQuiz(); }
+        if(time<0){ clearInterval(timer); submitQuiz(); }
     },1000);
 }
 </script>
